@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Parse JavaScript Todo App</title>
+    <link href="css/reset.css" media="all" rel="stylesheet" type="text/css"/>
+    <link href="css/todos.css" media="all" rel="stylesheet" type="text/css"/>
+    <link href="css/core.css" media="all" rel="stylesheet" type="text/css"/>
+    <link href="css/smoothness/jquery-ui-1.10.1.custom.min.css" media="all" rel="stylesheet" type="text/css"/>
+    <script src="js/underscore-1.1.6.js"></script>
+
+    <!--Online, Production mode-->
+
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    <script src="js/dev/jquery-ui-1.10.1.custom.js"></script>
+    <!--<script src="http://www.parsecdn.com/js/parse-1.1.15.min.js"></script>-->
+
+    <!--Prod mode-->
+
+
+    <!--Offline, Development mode-->
+
+    <!--<script src="js/dev/jquery-1.7.2.min.js"></script>-->
+    <!--<script src="js/dev/jquery-ui-1.10.1.custom.js"></script>-->
+    <script src="js/dev/parse-1.2.1.js"></script>
+
+    <!--Dev mode-->
+
+    <script src="js/core.js"></script>
+    <script src="js/views/row-container-view.js"></script>
+    <script src="js/views/app-view.js"></script>
+    <script src="js/views/popup-form.js"></script>
+    <script src="js/views/user-view.js"></script>
+    <script src="js/app.js"></script>
+</head>
+
+<body>
+
+<!-- Todo App Interface -->
+<a id="test-login" class="button">Login</a>
+<a id="test-signup" class="button">Sign Up</a>
+<a href="#" class="log-out button">Log Out</a>
+
+<div id="todoapp">
+    <div class="title">
+        <h1>KiraKash.UZ</h1>
+    </div>
+    <a id="test-app" class="button">App</a>
+    <a id="test-contact" class="button">Contact</a>
+
+    <div class="content">
+    </div>
+</div>
+
+<div id="credits">
+    Designed by SPARX.
+</div>
+
+<div id="overlay" class="transparent">
+
+</div>
+
+<!-- Templates -->
+<script type="text/template" id="login-template">
+    <div class="login">
+        <form class="login-form">
+            <div class="error" style="display:none"></div>
+            <div class="txt-field">
+                <input type="text" id="login-username" placeholder="Username"/>
+            </div>
+            <div class="txt-field">
+                <input type="password" id="login-password" placeholder="Password"/>
+            </div>
+        </form>
+    </div>
+</script>
+
+<script type="text/template" id="timepicker-template">
+    <div class="ui-datepicker-header ui-widget-header ui-helper-clearfix ui-corner-all">
+        <a class="ui-datepicker-prev ui-corner-all" data-handler="prev" data-event="click" title="Prev">
+            <span class="ui-icon ui-icon-circle-triangle-w">Prev</span>
+        </a>
+        <a class="ui-datepicker-next ui-corner-all" data-handler="next" data-event="click"
+           title="Next">
+            <span class="ui-icon ui-icon-circle-triangle-e">Next</span>
+        </a>
+
+        <div class="ui-datepicker-title">
+            <span class="ui-datepicker-month">February</span>&nbsp;
+            <span class="ui-datepicker-year">2013</span>
+        </div>
+    </div>
+</script>
+
+<script type="text/template" id="signup-template">
+    <div class="login">
+        <form class="signup-form" name="Sign Up">
+            <div class="error" style="display:none"></div>
+            <input type="hidden" class="more" value="It will take only 30 seconds">
+
+            <div class="txt-field">
+                <label for="signup-username">Username</label>
+                <input type="text" id="signup-username" placeholder="Username"/>
+            </div>
+
+            <div class="txt-field">
+                <label for="signup-password">Password</label>
+                <input type="password" id="signup-password" placeholder="Password"/>
+            </div>
+
+            <div class="txt-field">
+                <label for="signup-password-confirm">Confirm Password</label>
+                <input type="password" id="signup-password-confirm" placeholder="Confirm Password"/>
+            </div>
+
+            <div class="txt-field">
+                <label for="signup-name">Name</label>
+                <input type="text" id="signup-name" placeholder="Ful Name"/>
+            </div>
+
+            <div class="txt-field">
+                <label for="signup-email">Email</label>
+                <input type="email" id="signup-email" placeholder="example@mail.com"/>
+            </div>
+
+            <div class="txt-field">
+                <label for="signup-phone">Phone Number</label>
+                <input type="text" id="signup-phone" placeholder="+99812 345 67 89"/>
+            </div>
+        </form>
+    </div>
+</script>
+
+<script type="text/template" id="app-template">
+    <div class="app">
+        <form class="app-form" name="Application">
+            <div class="error" style="display:none"></div>
+
+            <div class="txt-field">
+                <label for="app-type">Type</label>
+                <select id="app-type">
+                    <% _.each(types,function(item, index){%>
+                    <option>
+                        <%=item%>
+                    </option>
+                    <%});%>
+                </select>
+            </div>
+
+            <div class="txt-field">
+                <!--for="app-time"-->
+                <label>Time</label>
+                <input type="number" min="0" max="23" step="1" value="00">
+                <input type="number" min="0" max="59" step="15" value="00">
+
+            </div>
+
+            <div class="txt-field">
+                <label for="app-date">Date</label>
+                <input type="text" id="app-date" value="<%= date%>" placeholder="01.31.2013"/>
+            </div>
+
+            <div class="txt-field">
+                <label for="app-from">From</label>
+
+                <select id="app-from">
+                    <% _.each(cities,function(city, index){%>
+                    <option>
+                        <%=city%>
+                    </option>
+                    <%});%>
+                </select>
+
+            </div>
+
+            <div class="txt-field">
+                <label for="app-to">To</label>
+
+                <select id="app-to">
+                    <% _.each(cities,function(city, index){%>
+                    <option>
+                        <%=city%>
+                    </option>
+                    <%});%>
+                </select>
+            </div>
+
+            <div class="txt-field">
+                <label for="app-place">Places</label>
+
+                <select id="app-place">
+                    <option>1</option>
+                    <option>2</option>
+                    <option>3</option>
+                    <option>4</option>
+                </select>
+            </div>
+
+            <!--Tested it is working-->
+            <div class="txt-field">
+                <label for="app-smoker">Smoker</label>
+                <input type="checkbox" id="app-smoker" <%if(app.isSmoker){%> checked='checked' <%}%>/>
+            </div>
+
+            <div class="txt-field">
+                <label for="app-vehicle">Vehicle</label>
+                <input type="text" id="app-vehicle" placeholder="what car do you drive?">
+                <!--Todo - replace-->
+                <!--<div id="app-vehicle"></div>-->
+            </div>
+
+            <div class="txt-field">
+                <label for="app-comment">Comment</label>
+                <textarea id="app-comment"
+                          placeholder="Add some more information about ride..."><%=app.comment%></textarea>
+            </div>
+
+        </form>
+    </div>
+</script>
+
+
+<script type="text/template" id="row-template">
+    <input type="text" class="item-edit input" placeholder="New name..." required>
+    <input type="submit" class="save" value="Edit">
+    <a class="destroy button">X</a>
+</script>
+
+<script type="text/template" id="manage-contact-template">
+    <form class="section">
+        <header id="contact-header">
+            <input id="new-contact" type="text" class="input" autofocus="autofocus" placeholder="New..." required/>
+            <input type="submit" class="save" value="ADD"/>
+            <a class="button clear">Clear</a>
+        </header>
+        <ul id="contact-list">
+
+        </ul>
+    </form>
+</script>
+
+<script type="text/template" id="popup-template">
+
+    <div class="popup-header">
+        <div class="title"><%= temp.title %></div>
+        <p><%= temp.more %></p>
+        <a class="right popup-close pointer">X</a>
+    </div>
+    <div class="popup-content"></div>
+    <div class="popup-footer"><a class="button"><%= temp.buttonText %></a></div>
+
+</script>
+
+<script type="text/template" id="manage-todos-template">
+    <div id="user-info">
+        Signed in as <%= Parse.User.current().get("username") %> (<a href="#" class="log-out">Log out</a>)
+    </div>
+
+    <div class="section">
+
+        <header id="header">
+            <input id="new-todo" placeholder="What needs to be done?" type="text"/>
+        </header>
+
+        <div id="main">
+            <input id="toggle-all" type="checkbox">
+            <label for="toggle-all">Mark all as complete</label>
+
+            <ul id="todo-list">
+                <img src='images/spinner.gif' class='spinner'/>
+            </ul>
+        </div>
+
+        <div id="todo-stats"></div>
+    </div>
+</script>
+
+<script type="text/template" id="item-template">
+    <li class="<%= done ? 'completed' : '' %>">
+        <div class="view">
+            <input class="toggle" type="checkbox" <%= done ? 'checked="checked"' : '' %>>
+            <label class="todo-content"><%= content %></label>
+            <button class="todo-destroy"></button>
+        </div>
+        <input class="edit" value="<%= content %>">
+    </li>
+</script>
+
+<script type="text/template" id="stats-template">
+    <footer id="footer">
+        <span id="todo-count"><strong><%= remaining %></strong> <%= remaining == 1 ? 'item' : 'items' %> left</span>
+        <ul id="filters">
+            <li>
+                <a href="javascript:void(0)" id="all" class="selected">All</a>
+            </li>
+            <li>
+                <a href="javascript:void(0)" id="active">Active</a>
+            </li>
+            <li>
+                <a href="javascript:void(0)" id="completed">Completed</a>
+            </li>
+        </ul>
+        <button id="clear-completed">Clear completed (<%= done %>)</button>
+    </footer>
+</script>
+
+</body>
+
+</html>
